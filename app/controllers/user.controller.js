@@ -23,9 +23,9 @@ exports.createProduct = async (req, res) => {
     let user_id = req.body.userId;
     let image_name = image.name;
     // convert binary data to base64 encoded string
-    await image.mv(path + image.name,   function (err, result) {
+    await image.mv(path + image.name,   async function (err, result) {
         let imageData =  base64_encode( path + image.name);
-        predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
+       await predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
             console.log("0000000000000", productData);
             if(error) {
                 res.status(500).send({message: error});
