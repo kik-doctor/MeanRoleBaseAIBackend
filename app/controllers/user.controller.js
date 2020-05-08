@@ -23,11 +23,7 @@ exports.userBoard = (req, res) => {
     let user_id = req.body.userId;
     let image_name = image.name;
     // convert binary data to base64 encoded string
-        image.mv(path + image.name,     function (err) {
-        if(err) {
-            console.log("66666666666666", err);
-        }
-        else {
+        image.mv(path + image.name).then(result => {
             let imageData =   base64_encode( path + image.name);
             predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
                 console.log("0000000000000", productData);
@@ -46,9 +42,8 @@ exports.userBoard = (req, res) => {
                     }
                 });
             })
-        }
-    });
-};
+        });
+ }
 
 exports.getProduct = (req, res) => {
     let user_id = req.query.userId;
