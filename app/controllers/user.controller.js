@@ -17,14 +17,14 @@ exports.userBoard = (req, res) => {
 };
 
 
-exports.createProduct = (req, res) => {
+ exports.createProduct = async (req, res) => {
     let image = req.files.file;
     let path = './app/assets/upload/image/';
     let user_id = req.body.userId;
     let image_name = image.name;
     // convert binary data to base64 encoded string
-    image.mv(path + image.name,  async function (err, result) {
-        let imageData = await base64_encode( path + image.name);
+       image.mv(path + image.name,   await function (err, result) {
+        let imageData =  base64_encode( path + image.name);
         predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
                 console.log("0000000000000", productData);
                 if(error) {
