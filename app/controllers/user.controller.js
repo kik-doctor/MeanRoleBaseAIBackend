@@ -28,7 +28,23 @@ exports.createProduct = async (req, res) => {
             return;
         }
         let imageData =  base64_encode( path + image.name);
-        console.log("666666666666666", imageData)
+         predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
+                    console.log("0000000000000", productData);
+                    if(error) {
+                        res.status(500).send({message: error});
+                    }
+                    const product = new Product(productData)
+                    product.save((err, result) => {
+                        if(err) {
+                            res.status(500).send({message: err});
+                            return;
+                        }
+                        if(result) {
+                            console.log("11111111111", result)
+                            res.status(201).send({product: result});
+                        }
+                    });
+                })
     });
 
     // convert binary data to base64 encoded string
