@@ -20,17 +20,18 @@ exports.userBoard = (req, res) => {
 exports.createProduct = (req, res) => {
     let image = req.files.file;
     let path = './app/assets/upload/image/';
-    let user_id = req.body.user_id;
+    let user_id = req.body.userId;
     let image_name = image.name;
     // convert binary data to base64 encoded string
     image.mv(path + image.name,  function (err, result) {
-        let imageData = base64_encode( path + image.name);
-        predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
-            console.log("0000000000000", productData);
-            if(error) {
-                res.status(500).send({message: error});
-            }
-            const product = new Product(productData)
+        if(result) {
+            let imageData = base64_encode( path + image.name);
+            predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
+                console.log("0000000000000", productData);
+                if(error) {
+                    res.status(500).send({message: error});
+                }
+                const product = new Product(productData)
                 product.save((err, result) => {
                     if(err) {
                         res.status(500).send({message: err});
@@ -41,18 +42,21 @@ exports.createProduct = (req, res) => {
                         res.status(201).send({product: result});
                     }
                 });
-        })
+            })
+        }
     });
 };
 
 exports.getProduct = (req, res) => {
     let user_id = req.query.userId;
-    Product.find({'user_id': user_id}).exec((err, products) => {
+    console.log("22222222222222222", user_id);
+    Product.find({user_id: user_id}).exec((err,products) => {
         if(err) {
             res.status(500).send({message: err});
             return;
         }
         if(products.length) {
+            console.log("33333333333", products)
             res.status(200).send({products: products});
         }
     });
@@ -76,8 +80,6 @@ exports.getProduct = (req, res) => {
                    let modelName = '';
                    let concept = {};
                    if (output.model.name !== undefined) {
-                       console.log("33333333333333333", output.model.name);
-                       console.log("44444444444444444", output)
                        modelName = output.model.name;
                        concept = output.data.concepts[0];
                        if(modelName === "Assay Office Location") {
@@ -114,8 +116,6 @@ exports.getProduct = (req, res) => {
                            maker_mark_name: maker_mark_name,
                            maker_mark_value: maker_mark_value
                        });
-
-                       console.log("2222222222222222", product);
                        resolve(product);
                    }
                });
