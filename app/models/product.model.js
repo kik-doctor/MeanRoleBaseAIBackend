@@ -22,8 +22,8 @@ const Product = mongoose.model(
             default: 0
         },
         date_name: {
-            type: Date,
-            default: Date.now()
+            type: String,
+            default: ''
         },
         date_value: {
             type: Number,
