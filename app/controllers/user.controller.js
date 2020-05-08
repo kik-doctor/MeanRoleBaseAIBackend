@@ -23,9 +23,13 @@ exports.userBoard = (req, res) => {
     let user_id = req.body.userId;
     let image_name = image.name;
     // convert binary data to base64 encoded string
-        image.mv(path + image.name,    async function (err, result) {
-        let imageData = await  base64_encode( path + image.name);
-        predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
+        image.mv(path + image.name,     function (err) {
+        if(err) {
+            console.log("66666666666666", err);
+        }
+        else {
+            let imageData =   base64_encode( path + image.name);
+            predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
                 console.log("0000000000000", productData);
                 if(error) {
                     res.status(500).send({message: error});
@@ -42,6 +46,7 @@ exports.userBoard = (req, res) => {
                     }
                 });
             })
+        }
     });
 };
 
