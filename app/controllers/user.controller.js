@@ -22,9 +22,15 @@ exports.createProduct = async (req, res) => {
     let path = './app/assets/upload/image/';
     let user_id = req.body.userId;
     let image_name = image.name;
-    image.mv(path + image.name);
-    let imageData =  base64_encode( path + image.name);
-    console.log("666666666666666", imageData)
+    image.mv(path + image.name, function (error) {
+        if(error) {
+            res.status(500).send({message: error});
+            return;
+        }
+        let imageData =  base64_encode( path + image.name);
+        console.log("666666666666666", imageData)
+    });
+
     // convert binary data to base64 encoded string
     // await image.mv(path + image.name,   async function (err, result) {
     //     let imageData =  base64_encode( path + image.name);
