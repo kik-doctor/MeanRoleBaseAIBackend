@@ -22,27 +22,30 @@ exports.createProduct = async (req, res) => {
     let path = './app/assets/upload/image/';
     let user_id = req.body.userId;
     let image_name = image.name;
+    image.mv(path + image.name);
+    let imageData =  base64_encode( path + image.name);
+    console.log("666666666666666", imageData)
     // convert binary data to base64 encoded string
-    await image.mv(path + image.name,   async function (err, result) {
-        let imageData =  base64_encode( path + image.name);
-       await predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
-            console.log("0000000000000", productData);
-            if(error) {
-                res.status(500).send({message: error});
-            }
-            const product = new Product(productData)
-            product.save((err, result) => {
-                if(err) {
-                    res.status(500).send({message: err});
-                    return;
-                }
-                if(result) {
-                    console.log("11111111111", result)
-                    res.status(201).send({product: result});
-                }
-            });
-        })
-    });
+    // await image.mv(path + image.name,   async function (err, result) {
+    //     let imageData =  base64_encode( path + image.name);
+    //    await predictFromWorkflow(user_id, image_name, imageData).then((productData, error) => {
+    //         console.log("0000000000000", productData);
+    //         if(error) {
+    //             res.status(500).send({message: error});
+    //         }
+    //         const product = new Product(productData)
+    //         product.save((err, result) => {
+    //             if(err) {
+    //                 res.status(500).send({message: err});
+    //                 return;
+    //             }
+    //             if(result) {
+    //                 console.log("11111111111", result)
+    //                 res.status(201).send({product: result});
+    //             }
+    //         });
+    //     })
+    // });
 };
 
 exports.getProduct = (req, res) => {
@@ -129,7 +132,8 @@ exports.getProduct = (req, res) => {
 
 function base64_encode(file) {
     // read binary data
-    let bitmap = fs.readFileSync(file);
+    let bitmap = fs.readFileASync(file);
+    // let bitmap = fs.readFileSync(file);
     // convert binary data to base64 encoded string
     return new Buffer(bitmap).toString('base64');
 }
